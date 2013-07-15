@@ -27,8 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 ###
 
+import sys
 import time
-import Queue
+if sys.version_info[0] >= 3:
+    import queue
+else:
+    import Queue as queue
 import random
 import threading
 
@@ -58,9 +62,9 @@ class SqlAlchemyMarkovDB(object):
             import sqlalchemy as sql
             self.sql = sql
         except ImportError:
-            raise callbacks.Error, \
-                    'You need to have SQLAlchemy installed to use this ' \
-                    'plugin.  Download it at <http://www.sqlalchemy.org/>'
+            raise callbacks.Error(
+                    'You need to have SQLAlchemy installed to use this '
+                    'plugin.  Download it at <http://www.sqlalchemy.org/>')
 
         filename = plugins.makeChannelFilename(self.filename, channel)
         engine = sql.create_engine(self.engine + filename, echo=debug)
@@ -155,8 +159,6 @@ class SqlAlchemyMarkovDB(object):
         results.close()
         if not r:
             raise KeyError
-        print 'foo'
-        print repr(r)
         L = self._weightedChoice(r)
         isLast = False
         if not L[-1]:
@@ -261,7 +263,7 @@ class DbmMarkovDB(object):
         if firsts:
             return (None, utils.iter.choice(firsts))
         else:
-            raise KeyError, 'No firsts for %s.' % channel
+            raise KeyError('No firsts for %s.' % channel)
 
     def getFollower(self, channel, first, second):
         db = self._getDb(channel)
@@ -309,7 +311,7 @@ class MarkovWorkQueue(threading.Thread):
         world.threadsSpawned += 1
         threading.Thread.__init__(self, name=name)
         self.db = MarkovDB(*args, **kwargs)
-        self.q = Queue.Queue()
+        self.q = queue.Queue()
         self.killed = False
         self.setDaemon(True)
         self.start()
