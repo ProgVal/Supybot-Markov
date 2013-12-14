@@ -1,0 +1,7 @@
+# Python
+__pycache__/
+*.py[cdo]
+
+# Vim
+.*.s[a-w][a-p]
+.s[a-w][a-p]
